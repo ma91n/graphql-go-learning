@@ -1,13 +1,11 @@
 package fields
 
 import (
-	"encoding/json"
 	"errors"
 	"github.com/graphql-go/graphql"
 	"github.com/laqiiz/graphql-go-learning/suburi/model"
 	"github.com/laqiiz/graphql-go-learning/suburi/repository"
 	"github.com/laqiiz/graphql-go-learning/suburi/schema/types"
-	"os/user"
 )
 
 var (
@@ -101,8 +99,8 @@ var CreateEventField = &graphql.Field{
 	Type:        types.EventType,
 	Description: "Create new event",
 	Args: graphql.FieldConfigArgument{
-		"user": &graphql.ArgumentConfig{
-			Type: types.UserInput,
+		"userId": &graphql.ArgumentConfig{
+			Type: graphql.NewNonNull(graphql.String),
 		},
 		"eventName": &graphql.ArgumentConfig{
 			Type: graphql.NewNonNull(graphql.String),
@@ -121,24 +119,14 @@ var CreateEventField = &graphql.Field{
 		},
 	},
 	Resolve: func(params graphql.ResolveParams) (interface{}, error) {
-		givenUser, _ := params.Args["user"]
+		userId, _ := params.Args["userId"].(string)
 		eventName, _ := params.Args["eventName"].(string)
 		description, _ := params.Args["description"].(string)
 		location, _ := params.Args["location"].(string)
 		startTime, _ := params.Args["startTime"].(string)
 		endTime, _ := params.Args["endTime"].(string)
 
-		parsedJson, err := json.Marshal(givenUser)
-		if err != nil {
-			return nil, err
-		}
-
-		var parsedUser user.User
-		if err = json.Unmarshal(parsedJson, &parsedUser); err != nil {
-			return nil, err
-		}
-
-		newEvent, err := model.NewEvent(&parsedUser, eventName, description, location, startTime, endTime)
+		newEvent, err := model.NewEvent(userId, eventName, description, location, startTime, endTime)
 		if err != nil {
 			return nil, err
 		}
