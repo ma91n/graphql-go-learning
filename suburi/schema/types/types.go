@@ -60,7 +60,7 @@ var UserInput = graphql.NewInputObject(graphql.InputObjectConfig{
 	Name: "user",
 	Fields: graphql.InputObjectConfigFieldMap{
 		"userId": &graphql.InputObjectFieldConfig{
-			Type: graphql.String,
+			Type:         graphql.String,
 		},
 		"userName": &graphql.InputObjectFieldConfig{
 			Type: graphql.String,

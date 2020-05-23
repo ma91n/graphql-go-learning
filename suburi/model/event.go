@@ -19,16 +19,7 @@ type Event struct {
 	RegisteredTime int64        `json:"registeredTime"`
 }
 
-// constructor
-func NewEvent(
-	givenUser *user.User,
-	eventName string,
-	description string,
-	location string,
-	startTime string,
-	endTime string) (*Event, error) {
-
-	// validate
+func NewEvent(givenUser *user.User, eventName, description, location, startTime, endTime string) (*Event, error) {
 	if eventName == "" {
 		return nil, errors.New("eventName is empty")
 	}
@@ -61,8 +52,5 @@ func NewEvent(
 }
 
 func (event *Event) Equals(other *Event) bool {
-	if event.EventId == other.EventId {
-		return true
-	}
-	return false
+	return event.EventId == other.EventId
 }

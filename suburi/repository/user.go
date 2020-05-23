@@ -10,13 +10,12 @@ type UserRepository struct {
 }
 
 func NewUserRepository() *UserRepository {
-	return &UserRepository{[]*model.User{}}
+	return &UserRepository{}
 }
 
 // store event to repository
-func (r *UserRepository) Store(user *model.User) *UserRepository {
+func (r *UserRepository) Store(user *model.User) {
 	r.users = append(r.users, user)
-	return r
 }
 
 func (r UserRepository) FindById(userId string) (*model.User, error) {

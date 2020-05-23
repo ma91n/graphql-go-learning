@@ -2,17 +2,13 @@
 
 ## 実行例
 
-[graphqurl](https://github.com/hasura/graphqurl)という curl likeなツールをインストール
-$ npm install -g graphqurl
-
-$ gq http://localhost:8080/graphql -q '{user(id: "1"){userName}}'
-
-curl -i -X POST -d '{query: User {user(id: "1"){userName}}}' http://localhost:8080/graphql
-
 ```bash
 # キー指定
-curl -i -X POST -d '{query: user(id: "1"){userName}}' http://localhost:8080/graphql
+curl -i -X POST -d '{query: user(id: "195360fb-c3aa-4b68-93dd-a8185f55fd6b"){userName}}' http://localhost:8080/graphql
 
 # 全件取得
-curl -i -X POST -d '{query: userList{userName}}' http://localhost:8080/graphql
+curl -i -X POST -d '{query: userList{userName,email}}' http://localhost:8080/graphql
+
+# 登録
+curl -i -X POST -d 'mutation{createUser(userName:"mano", description: "des", photoURL: "photo", email: "email"){userId, userName, description, photoURL, email}}' http://localhost:8080/graphql
 ```

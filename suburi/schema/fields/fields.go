@@ -10,35 +10,36 @@ import (
 	"os/user"
 )
 
-// fetch single user
+var (
+	ur = repository.NewUserRepository()
+	er = repository.NewEventRepository()
+)
+
 var UserField = &graphql.Field{
-	Type:        types.UserType, // 返り値の型
+	Type:        types.UserType,
 	Description: "Get single user",
-	Args: graphql.FieldConfigArgument{ //引数の定義
+	Args: graphql.FieldConfigArgument{
 		"id": &graphql.ArgumentConfig{
 			Type: graphql.String,
 		},
 	},
-	Resolve: func(params graphql.ResolveParams) (interface{}, error) { //実行関数
-		userId, isOK := params.Args["id"].(string) // 引数取り出し
+	Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+		userId, isOK := params.Args["id"].(string)
 		if isOK {
-			return repository.NewUserRepository().FindById(userId)
+			return ur.FindById(userId)
 		}
-
 		return nil, errors.New("no userId")
 	},
 }
 
-// fetch all user
 var UserListField = &graphql.Field{
 	Type:        graphql.NewList(types.UserType),
 	Description: "List of users",
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		return repository.NewUserRepository().List(), nil
+		return ur.List(), nil
 	},
 }
 
-// create user
 var CreateUserField = &graphql.Field{
 	Type:        types.UserType,
 	Description: "Create new user",
@@ -64,13 +65,13 @@ var CreateUserField = &graphql.Field{
 
 		newUser, err := model.NewUser(userName, description, photoURL, email)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
-		repository.NewUserRepository().Store(newUser)
+		ur.Store(newUser)
 		return newUser, nil
 	},
 }
-// fetch single event
+
 var EventField = &graphql.Field{
 	Type:        types.EventType,
 	Description: "Get single event",
@@ -82,22 +83,20 @@ var EventField = &graphql.Field{
 	Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 		eventId, isOK := params.Args["id"].(string)
 		if isOK {
-			return repository.NewEventRepository().FindById(eventId)
+			return er.FindById(eventId)
 		}
 		return nil, errors.New("no eventId")
 	},
 }
 
-// fetch all event
 var EventListField = &graphql.Field{
 	Type:        graphql.NewList(types.EventType),
 	Description: "List of events",
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		return repository.NewEventRepository().List(), nil
+		return er.List(), nil
 	},
 }
 
-// create event
 var CreateEventField = &graphql.Field{
 	Type:        types.EventType,
 	Description: "Create new event",
@@ -131,22 +130,20 @@ var CreateEventField = &graphql.Field{
 
 		parsedJson, err := json.Marshal(givenUser)
 		if err != nil {
-			panic(err)
-		}
-		var parsedUser user.User
-		err = json.Unmarshal(parsedJson, &parsedUser)
-		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
-		// create new Event
+		var parsedUser user.User
+		if err = json.Unmarshal(parsedJson, &parsedUser); err != nil {
+			return nil, err
+		}
+
 		newEvent, err := model.NewEvent(&parsedUser, eventName, description, location, startTime, endTime)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
+		er.Store(newEvent)
 
-		repository.NewEventRepository().Store(newEvent)
 		return newEvent, nil
 	},
 }
-
