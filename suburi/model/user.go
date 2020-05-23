@@ -1,7 +1,11 @@
 package model
 
-import "errors"
-import "github.com/google/uuid"
+import (
+	"errors"
+	"fmt"
+)
+
+var userIdSeq int
 
 type User struct {
 	UserId      string `json:"userId"`
@@ -25,8 +29,10 @@ func NewUser(userName, description, photoURL, email string) (*User, error) {
 		return nil, errors.New("email is empty")
 	}
 
+	userIdSeq++
+
 	return &User{
-		UserId:      uuid.New().String(),
+		UserId:      fmt.Sprint(userIdSeq),
 		UserName:    userName,
 		Description: description,
 		PhotoURL:    photoURL,

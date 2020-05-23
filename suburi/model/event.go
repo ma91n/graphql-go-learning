@@ -2,14 +2,16 @@ package model
 
 import (
 	"errors"
-	"github.com/google/uuid"
+	"fmt"
 	"os/user"
 	"time"
 )
 
+var eventIdSeq int
+
 type Event struct {
 	EventId        string       `json:"eventId"`
-	User           *user.User   `json:"user"`
+	UserId         string       `json:"userId"`
 	EventName      string       `json:"eventName"`
 	Description    string       `json:"description"`
 	Location       string       `json:"location"`
@@ -19,7 +21,7 @@ type Event struct {
 	RegisteredTime int64        `json:"registeredTime"`
 }
 
-func NewEvent(givenUser *user.User, eventName, description, location, startTime, endTime string) (*Event, error) {
+func NewEvent(userId, eventName, description, location, startTime, endTime string) (*Event, error) {
 	if eventName == "" {
 		return nil, errors.New("eventName is empty")
 	}
@@ -35,13 +37,11 @@ func NewEvent(givenUser *user.User, eventName, description, location, startTime,
 	if endTime == "" {
 		return nil, errors.New("endTime is empty")
 	}
-	if givenUser == nil {
-		return nil, errors.New("user is nil")
-	}
 
+	eventIdSeq++
 	return &Event{
-		EventId:        uuid.New().String(),
-		User:           givenUser,
+		EventId:        fmt.Sprint(eventIdSeq),
+		UserId:         userId,
 		EventName:      eventName,
 		Description:    description,
 		Location:       location,
