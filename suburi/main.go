@@ -24,20 +24,28 @@ func main() {
 
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			json.NewEncoder(w).Encode(map[string]interface{}{"message": err})
+			if err := json.NewEncoder(w).Encode(map[string]interface{}{"message": err}); err != nil {
+				log.Println(err)
+			}
+			return
 		}
 		fmt.Println(string(body))
 
 		resp := graphql.Do(graphql.Params{
-			Schema:        gs,
-			RequestString: string(body),
+			Schema:         gs,
+			RequestString:  string(body),
+			Context:        r.Context(),
 		})
 		if len(resp.Errors) > 0 {
 			fmt.Printf("wrong result, unexpected errors: %v", resp.Errors)
 		}
-		json.NewEncoder(w).Encode(resp)
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			log.Println(err)
+		}
 	})
 
 	fmt.Println("Now server is running on port 8080")
-	http.ListenAndServe(":8080", nil)
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatalln(err)
+	}
 }

@@ -10,13 +10,12 @@ type EventRepository struct {
 }
 
 func NewEventRepository() *EventRepository {
-	return &EventRepository{[]*model.Event{}}
+	return &EventRepository{}
 }
 
 // store event to repository
-func (r *EventRepository) Store(event *model.Event) *EventRepository {
+func (r *EventRepository) Store(event *model.Event) {
 	r.events = append(r.events, event)
-	return r
 }
 
 func (r EventRepository) FindById(userId string) (*model.Event, error) {
@@ -25,7 +24,6 @@ func (r EventRepository) FindById(userId string) (*model.Event, error) {
 			return val, nil
 		}
 	}
-
 	return nil, errors.New("user not found")
 }
 
