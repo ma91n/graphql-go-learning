@@ -1,4 +1,4 @@
-package repository
+package dao
 
 import (
 	"errors"
@@ -13,7 +13,6 @@ func NewEventRepository() *EventRepository {
 	return &EventRepository{}
 }
 
-// store event to repository
 func (r *EventRepository) Store(event *model.Event) {
 	r.events = append(r.events, event)
 }

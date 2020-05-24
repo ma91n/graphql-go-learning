@@ -1,4 +1,4 @@
-package repository
+package dao
 
 import (
 	"errors"
@@ -13,7 +13,7 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{}
 }
 
-// store event to repository
+// store event to dao
 func (r *UserRepository) Store(user *model.User) {
 	r.users = append(r.users, user)
 }

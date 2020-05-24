@@ -1,4 +1,4 @@
-package types
+package gq
 
 import "github.com/graphql-go/graphql"
 
