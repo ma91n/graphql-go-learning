@@ -1,0 +1,68 @@
+type Company {
+    id: ID!
+    companyCD: Int!
+    rrCD:Int!
+    companyName: String!
+    companyNameK: String
+    companyNameH:String
+    companyNameR:String
+    companyURL:String
+    companyType: Int
+    eStatus: Int
+    eSort: Int
+}
+
+type Line {
+    id: ID!
+    lineCD: Int!
+    companyCD: Int!
+    lineName: String!
+    lineNameK:String
+    lineNakeH:String
+    lineColorC:String
+    lineColorT:String
+    lineType:String
+    lon:Float
+    lat:Float
+    zoom: Int
+    e_status: Int
+    e_sort: Int
+}
+
+scalar Time
+
+type Station {
+    stationCD: Int!
+    stationGCD:Int!
+    stationName: String!
+    stationNameK: String
+    stationNameR: String
+    lineCD: Int!
+    prefCD: Int
+    post: String
+    address: String
+    lon: Float
+    lat:Float
+    open_ymd: Time
+    close_ymd:Time
+    eStatus: Int
+    eSort:Int
+}
+
+type Join {
+    lineCD: Int!
+    stationCD1: Int!
+    stationCD2: Int!
+}
+
+type StationConn {
+    station: Station!
+    transferStation: [Station]
+    beforeStation: [Station]
+    afterStation: [Station]
+}
+
+type Query {
+    getStation(stationCD: Int): StationConn!
+    getAll: [StationConn!]
+}
