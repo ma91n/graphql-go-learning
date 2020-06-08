@@ -5,18 +5,16 @@ package graph
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/laqiiz/graphql-go-learning/eki/graph/generated"
 	"github.com/laqiiz/graphql-go-learning/eki/graph/model"
 )
 
-func (r *queryResolver) GetStation(ctx context.Context, stationCd *int) (*model.StationConn, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Transfer(ctx context.Context, stationCd *int) (*model.StationConn, error) {
+	return r.getStation(ctx, stationCd)
 }
 
-func (r *queryResolver) GetAll(ctx context.Context) ([]*model.StationConn, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) StationByName(ctx context.Context, stationName *string) ([]*model.Station, error) {
+	return r.getStationByName(ctx, stationName)
 }
 
 // Query returns generated.QueryResolver implementation.

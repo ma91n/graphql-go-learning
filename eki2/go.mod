@@ -1,4 +1,4 @@
-module github.com/laqiiz/graphql-go-learning/eki
+module github.com/laqiiz/graphql-go-learning/eki2
 
 go 1.14
 

@@ -12,7 +12,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/laqiiz/graphql-go-learning/eki/graph/model"
+	"github.com/laqiiz/graphql-go-learning/eki2/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -36,6 +36,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Query() QueryResolver
+	StationConn() StationConnResolver
 }
 
 type DirectiveRoot struct {
@@ -102,6 +103,11 @@ type ComplexityRoot struct {
 type QueryResolver interface {
 	Transfer(ctx context.Context, stationCd *int) (*model.StationConn, error)
 	StationByName(ctx context.Context, stationName *string) ([]*model.Station, error)
+}
+type StationConnResolver interface {
+	TransferStation(ctx context.Context, obj *model.StationConn) ([]*model.Station, error)
+	BeforeStation(ctx context.Context, obj *model.StationConn) (*model.Station, error)
+	AfterStation(ctx context.Context, obj *model.StationConn) (*model.Station, error)
 }
 
 type executableSchema struct {
@@ -1465,7 +1471,7 @@ func (ec *executionContext) _Query_transfer(ctx context.Context, field graphql.C
 	}
 	res := resTmp.(*model.StationConn)
 	fc.Result = res
-	return ec.marshalNStationConn2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStationConn(ctx, field.Selections, res)
+	return ec.marshalNStationConn2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStationConn(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_stationByName(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1503,7 +1509,7 @@ func (ec *executionContext) _Query_stationByName(ctx context.Context, field grap
 	}
 	res := resTmp.([]*model.Station)
 	fc.Result = res
-	return ec.marshalOStation2ᚕᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx, field.Selections, res)
+	return ec.marshalOStation2ᚕᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1804,7 +1810,7 @@ func (ec *executionContext) _StationConn_station(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.Station)
 	fc.Result = res
-	return ec.marshalNStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx, field.Selections, res)
+	return ec.marshalNStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _StationConn_transferStation(ctx context.Context, field graphql.CollectedField, obj *model.StationConn) (ret graphql.Marshaler) {
@@ -1818,13 +1824,13 @@ func (ec *executionContext) _StationConn_transferStation(ctx context.Context, fi
 		Object:   "StationConn",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TransferStation, nil
+		return ec.resolvers.StationConn().TransferStation(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1835,7 +1841,7 @@ func (ec *executionContext) _StationConn_transferStation(ctx context.Context, fi
 	}
 	res := resTmp.([]*model.Station)
 	fc.Result = res
-	return ec.marshalOStation2ᚕᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx, field.Selections, res)
+	return ec.marshalOStation2ᚕᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _StationConn_beforeStation(ctx context.Context, field graphql.CollectedField, obj *model.StationConn) (ret graphql.Marshaler) {
@@ -1849,13 +1855,13 @@ func (ec *executionContext) _StationConn_beforeStation(ctx context.Context, fiel
 		Object:   "StationConn",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.BeforeStation, nil
+		return ec.resolvers.StationConn().BeforeStation(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1866,7 +1872,7 @@ func (ec *executionContext) _StationConn_beforeStation(ctx context.Context, fiel
 	}
 	res := resTmp.(*model.Station)
 	fc.Result = res
-	return ec.marshalOStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx, field.Selections, res)
+	return ec.marshalOStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _StationConn_afterStation(ctx context.Context, field graphql.CollectedField, obj *model.StationConn) (ret graphql.Marshaler) {
@@ -1880,13 +1886,13 @@ func (ec *executionContext) _StationConn_afterStation(ctx context.Context, field
 		Object:   "StationConn",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.AfterStation, nil
+		return ec.resolvers.StationConn().AfterStation(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1897,7 +1903,7 @@ func (ec *executionContext) _StationConn_afterStation(ctx context.Context, field
 	}
 	res := resTmp.(*model.Station)
 	fc.Result = res
-	return ec.marshalOStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx, field.Selections, res)
+	return ec.marshalOStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
@@ -3229,14 +3235,41 @@ func (ec *executionContext) _StationConn(ctx context.Context, sel ast.SelectionS
 		case "station":
 			out.Values[i] = ec._StationConn_station(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "transferStation":
-			out.Values[i] = ec._StationConn_transferStation(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StationConn_transferStation(ctx, field, obj)
+				return res
+			})
 		case "beforeStation":
-			out.Values[i] = ec._StationConn_beforeStation(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StationConn_beforeStation(ctx, field, obj)
+				return res
+			})
 		case "afterStation":
-			out.Values[i] = ec._StationConn_afterStation(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._StationConn_afterStation(ctx, field, obj)
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3535,11 +3568,11 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNStation2githubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx context.Context, sel ast.SelectionSet, v model.Station) graphql.Marshaler {
+func (ec *executionContext) marshalNStation2githubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx context.Context, sel ast.SelectionSet, v model.Station) graphql.Marshaler {
 	return ec._Station(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx context.Context, sel ast.SelectionSet, v *model.Station) graphql.Marshaler {
+func (ec *executionContext) marshalNStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx context.Context, sel ast.SelectionSet, v *model.Station) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3549,11 +3582,11 @@ func (ec *executionContext) marshalNStation2ᚖgithubᚗcomᚋlaqiizᚋgraphql�
 	return ec._Station(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNStationConn2githubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStationConn(ctx context.Context, sel ast.SelectionSet, v model.StationConn) graphql.Marshaler {
+func (ec *executionContext) marshalNStationConn2githubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStationConn(ctx context.Context, sel ast.SelectionSet, v model.StationConn) graphql.Marshaler {
 	return ec._StationConn(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNStationConn2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStationConn(ctx context.Context, sel ast.SelectionSet, v *model.StationConn) graphql.Marshaler {
+func (ec *executionContext) marshalNStationConn2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStationConn(ctx context.Context, sel ast.SelectionSet, v *model.StationConn) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -3872,11 +3905,11 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return ec.marshalOInt2int(ctx, sel, *v)
 }
 
-func (ec *executionContext) marshalOStation2githubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx context.Context, sel ast.SelectionSet, v model.Station) graphql.Marshaler {
+func (ec *executionContext) marshalOStation2githubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx context.Context, sel ast.SelectionSet, v model.Station) graphql.Marshaler {
 	return ec._Station(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOStation2ᚕᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx context.Context, sel ast.SelectionSet, v []*model.Station) graphql.Marshaler {
+func (ec *executionContext) marshalOStation2ᚕᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx context.Context, sel ast.SelectionSet, v []*model.Station) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -3903,7 +3936,7 @@ func (ec *executionContext) marshalOStation2ᚕᚖgithubᚗcomᚋlaqiizᚋgraphq
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx, sel, v[i])
+			ret[i] = ec.marshalOStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3916,7 +3949,7 @@ func (ec *executionContext) marshalOStation2ᚕᚖgithubᚗcomᚋlaqiizᚋgraphq
 	return ret
 }
 
-func (ec *executionContext) marshalOStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋekiᚋgraphᚋmodelᚐStation(ctx context.Context, sel ast.SelectionSet, v *model.Station) graphql.Marshaler {
+func (ec *executionContext) marshalOStation2ᚖgithubᚗcomᚋlaqiizᚋgraphqlᚑgoᚑlearningᚋeki2ᚋgraphᚋmodelᚐStation(ctx context.Context, sel ast.SelectionSet, v *model.Station) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
